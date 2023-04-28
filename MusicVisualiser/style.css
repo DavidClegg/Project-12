@@ -1,7 +1,7 @@
 :root{
     --p:hsl(0, 1%, 87%); /*Primary*/ /* Keeping this as a vairble allows the elements to remain visually connected to the background */
     --l:hsl(0, 5%, 91%); /*Lighter*/
-    --d:hsl(0, 1%, 74%); /*Darker*/
+    --d:hsl(0, 0%, 52%); /*Darker*/
     --raise: 3px 3px 5px 0px var(--d), -3px -3px 5px 0px var(--l); /* Box-shadow variable that creates a raised effect */
     --sink: inset 3px 3px 5px var(--d), inset -3px -3px 5px var(--l); /* Box-shadow variable that creates a sunken effect */
     --vinyl:#414141;
@@ -19,6 +19,12 @@ html{
 }
 
 body{
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+section{
     width: 100%;
     height: 100%;
     padding: 0;
@@ -57,6 +63,7 @@ body{
 .album{
     border-radius: 100%;
 }
+
 
 #mainAlbum{
     height: 200px;
@@ -98,6 +105,7 @@ body{
     background: var(--vinyl);
     transform: rotate(var(--rotation));
     transition: transform 0.3s linear;
+    box-shadow: 3px 3px 5px 0px #1115;
 }
 
 
@@ -118,8 +126,23 @@ body{
     cursor: pointer;
     width: 12rem;
     aspect-ratio: 1;
+    display: flex;
+    border-radius: 1rem;
+    justify-content: center;
+    align-items: center;
 }
 
+.small{
+    height: 12rem;
+    width: 12rem;
+    border-radius: 0;
+    opacity: 0.7;
+    border-radius: 1em;
+}
+
+.selected{
+    filter: saturate(2);
+}
 
 #controls{
     width: 50%;

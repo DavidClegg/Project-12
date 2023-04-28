@@ -2,7 +2,10 @@ const audioElement = document.querySelector("audio");
 const height = 500;
 const width = 500;
 
-(function main(){
+let duration = 0;
+
+function load(url){
+    audioElement.src = url
     const audioContext = new AudioContext();
     let currentBuffer = null;
     
@@ -10,10 +13,10 @@ const width = 500;
         fetch(url)
             .then(response => response.arrayBuffer())
             .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-            .then(audioBuffer => audioBuffer.getChannelData(0))
+            .then(audioBuffer => {duration = audioBuffer.duration; return audioBuffer.getChannelData(0)})
             .then(channelData => handleData(channelData))
     }
-    fetchData("I Got a Stick Arr Bryan Teoh.mp3");
+    fetchData(url);
 
     function handleData(Input){
         console.log("D3")
@@ -51,10 +54,16 @@ const width = 500;
         .attr("transform", `translate(${width/2}, ${height/2})`)
         .attr("d", line)
     }
-})();
+};
 audioElement.addEventListener("timeupdate", e=>{
-    let angle = (audioElement.currentTime/audioElement.duration) * 360 -3;
-        console.log(angle)
+    let angle = (audioElement.currentTime/duration) * 360 -3;
+    console.log({
+        current: audioElement.currentTime,
+        duration: audioElement.duration,
+        globalDuration: duration,
+        angle: angle
+    })
+        // console.log(angle)
         // angle > 360? 
         // document.documentElement.style.setProperty("--rotation", `0deg`)//("style", `transform: rotate(-${angle + 3}deg)`);
         // :
@@ -106,3 +115,32 @@ control.stop.addEventListener("click", e =>{
         audioElement.addEventListener("ended", ()=> document.documentElement.style.setProperty("--rotation", `0deg`))
     }
 })
+
+// Album Buttons
+const cds = document.querySelectorAll(".cd");
+
+let songs = [
+    "./music/futuristic-beat-146661.mp3",
+    "./music/my-universe-147152.mp3",
+    "./music/reflected-light-147979.mp3",
+    "./music/the-future-bass-15017.mp3",
+];
+
+let images = [
+    "./art/futuristic-beat-146661.webp",
+    "./art/my-universe-147152.webp",
+    "./art/reflected-light-147979.webp",
+    "./art/the-future-bass-15017.webp",
+]
+
+function playCD(n){
+    cds.forEach(cd => cd.classList.remove("sink"));
+    cds.forEach(cd => cd.classList.remove("selected"));
+    cds[n].classList.add("sink");
+    cds[n].classList.add("selected");
+    load(songs[n]);
+    document.querySelector("svg").remove();
+    document.querySelector("#mainAlbum").src = images[n];
+}
+
+window.addEventListener("load",e=>playCD(0));

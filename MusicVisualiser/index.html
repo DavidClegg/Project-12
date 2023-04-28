@@ -8,35 +8,63 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <h1>Music Vis</h1>
-  <div id="shelf" class="raise">
-    <div class="cd raise" onclick="this.classList.toggle('sink')">
-    <img src="" alt="" class="album small">
-    </div>
-    <div class="cd raise" onclick="this.classList.toggle('sink')">2</div>
-    <div class="cd raise" onclick="this.classList.toggle('sink')">3</div>
-    <div class="cd raise" onclick="this.classList.toggle('sink')">4</div>
-  </div>
-  <div id="center" class="container raise">
-    <audio src="I Got a Stick Arr Bryan Teoh.mp3"></audio>
-      <div id="record">
-            <img src="https://picsum.photos/400" alt="" id="mainAlbum" class="album">
-            <div class="punch"></div>
-            <div class="head"></div>
+    <section>
+        <h1>Music Vis</h1>
+        <p>
+            <a href="github" style="color: #222">Github</a>
+        </p>
+        <div id="shelf" class="raise">
+          <div class="cd raise sink selected" onclick="playCD(0)">
+              <img src="./art/futuristic-beat-146661.webp" alt="" class="album small">
+          </div>
+          <div class="cd raise" onclick="playCD(1)">
+              <img src="./art/my-universe-147152.webp" alt="" class="album small">
+          </div>
+          <div class="cd raise" onclick="playCD(2)">
+              <img src="./art/reflected-light-147979.webp" alt="" class="album small">
+          </div>
+          <div class="cd raise" onclick="playCD(3)">
+              <img src="./art/the-future-bass-15017.webp" alt="" class="album small">
+          </div>
         </div>
-    <div id="controls">
-        <div id="play" class="button raise">
-            <i class="fa-solid fa-play"></i>
+        <div id="center" class="container raise">
+          <audio src="I Got a Stick Arr Bryan Teoh.mp3"></audio>
+            <div id="record">
+                  <img src="./art/futuristic-beat-146661.webp" alt="" id="mainAlbum" class="album">
+                  <div class="punch"></div>
+                  <div class="head"></div>
+              </div>
+          <div id="controls">
+              <div id="play" class="button raise">
+                  <i class="fa-solid fa-play"></i>
+              </div>
+              <div id="pause" class="button raise">
+                  <i class="fa-solid fa-pause"></i>
+              </div>
+              <div id="stop" class="button raise">
+                  <i class="fa-solid fa-stop"></i>
+              </div>
+          </div>
         </div>
-        <div id="pause" class="button raise">
-            <i class="fa-solid fa-pause"></i>
-        </div>
-        <div id="stop" class="button raise">
-            <i class="fa-solid fa-stop"></i>
-        </div>
-    </div>
-  </div>
+    </section>
   <script src="https://cdn.jsdelivr.net/npm/d3@7.8.3/dist/d3.min.js"></script>
   <script src="script.js"></script>
 </body>
+<footer>
+  <p>
+    Music from <a href="https://pixabay.com/music/">Pixabay</a>
+ </p>
+  <p>
+    <a href="https://pixabay.com/music/future-bass-futuristic-beat-146661/">Futuristic Beat</a> by RoyaltyFreeMusic
+</p>
+<p>
+      <a href="https://pixabay.com/music/future-bass-my-universe-147152/">My Universe</a> by Nesterouk
+    </p>
+    <p>
+      <a href="https://pixabay.com/music/beautiful-plays-reflected-light-147979/">Reflected Light</a> by SergePavkinMusic 
+    </p>
+    <p>
+      <a href="https://pixabay.com/music/future-bass-the-future-bass-15017/">The Future Bass</a> by Evgeny Bardyuzha
+  </p>
+</footer>
 </html>
