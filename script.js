@@ -5,6 +5,8 @@ const width = 500; // width of the svg
 
 let duration = 0; // global duration; simply using audioElement.duration kept giving me Infinity; which is ridiculous, I don't have that much time!
 
+let busy = false; // There's a problem where calling playCD(n) before the svg is finished processing will create multiple svgs. A simple flag should fix it.
+
 function load(url){
     // Main loop.
     audioElement.src = url // set the audio element
@@ -17,6 +19,7 @@ function load(url){
             .then(audioBuffer => {duration = audioBuffer.duration; return audioBuffer.getChannelData(0)})
             // Grab to duration field from the audio data to use later. Get the audio from the first channel
             .then(channelData => handleData(channelData)) // Pass the channel data to function that creates the waveform
+            .then(() => busy = false);
     }
     fetchData(url);
 
@@ -125,13 +128,20 @@ let images = [
 ]
 
 function playCD(n){
-    cds.forEach(cd => cd.classList.remove("sink"));
-    cds.forEach(cd => cd.classList.remove("selected"));
-    cds[n].classList.add("sink");
-    cds[n].classList.add("selected");
-    load(songs[n]);
-    document.querySelector("svg").remove();
-    document.querySelector("#mainAlbum").src = images[n];
+    if(busy == false){
+        busy = true;
+        control.play.classList.remove("sink");
+        control.pause.classList.remove("sink");
+        control.stop.classList.remove("sink");
+        playing = false;
+        cds.forEach(cd => cd.classList.remove("sink"));
+        cds.forEach(cd => cd.classList.remove("selected"));
+        cds[n].classList.add("sink");
+        cds[n].classList.add("selected");
+        load(songs[n]);
+        document.querySelector("svg").remove();
+        document.querySelector("#mainAlbum").src = images[n];
+    }
 }
 
 window.addEventListener("load",e=>playCD(0)); 
