@@ -1,0 +1,139 @@
+:root{
+    --p:hsl(0, 1%, 87%); /*Primary*/ /* Keeping this as a vairble allows the elements to remain visually connected to the background */
+    --l:hsl(0, 5%, 91%); /*Lighter*/
+    --d:hsl(0, 1%, 74%); /*Darker*/
+    --raise: 3px 3px 5px 0px var(--d), -3px -3px 5px 0px var(--l); /* Box-shadow variable that creates a raised effect */
+    --sink: inset 3px 3px 5px var(--d), inset -3px -3px 5px var(--l); /* Box-shadow variable that creates a sunken effect */
+    --vinyl:#414141;
+    --groove:#111;
+    --rotation:0deg;
+}
+
+html{
+    background:var(--p);
+    color: #222;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body{
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr auto 1fr;
+    grid-template-areas: 
+    ". . ."
+    "shelf center ."
+    ". . .";
+}
+
+.raise{
+    background: var(--p);
+    box-shadow: var(--raise);
+}
+.sink{
+    background: var(--p);
+    box-shadow: var(--sink);
+}
+
+#center{
+    grid-area: center;
+    border-radius: 1rem;
+    height: 50rem;
+    aspect-ratio: 2/3;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 2fr 1fr;
+    justify-items: center;
+    align-items: center;
+}
+
+.album{
+    border-radius: 100%;
+}
+
+#mainAlbum{
+    height: 200px;
+    aspect-ratio: 1;
+    z-index: 3;
+    position: absolute;
+    border: 2rem solid #111;
+    transform: rotate(var(--rotation));
+    transition: transform 0.3s linear;
+}
+
+.punch{
+    z-index: 4;
+    position: absolute;
+    width: 30px;
+    aspect-ratio: 1;
+    background: #111;
+    border-radius: 100%;
+}
+
+.head{
+    z-index: 2;
+    position: fixed;
+    /* top: 115px; */
+    width: 2px;
+    height: 120px;
+    background: red;
+    transform: translate(0px, -190px);
+}
+#record{
+    margin: 1rem;
+    z-index: 2;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+#record svg{
+    border-radius: 100%;
+    background: var(--vinyl);
+    transform: rotate(var(--rotation));
+    transition: transform 0.3s linear;
+}
+
+
+#shelf{
+    grid-area: shelf;
+    border-radius: 0rem 1rem 1rem 0;
+    width: 20rem;
+    padding: 2rem 0rem;
+
+    display: grid;
+    grid-template-rows: repeat(1fr, 4);
+    grid-gap: 1rem;
+    justify-content: center;
+}
+
+.cd{
+    /* background-color: red; */
+    cursor: pointer;
+    width: 12rem;
+    aspect-ratio: 1;
+}
+
+
+#controls{
+    width: 50%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+}
+
+.button{
+    cursor: pointer;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    aspect-ratio: 1;
+    border-radius: 100%;
+}

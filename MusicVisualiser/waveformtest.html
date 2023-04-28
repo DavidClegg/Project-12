@@ -1,0 +1,138 @@
+<style>
+:root{
+    --a: #222;
+    --b: #696868;
+    --c: #931010;
+}
+#target svg{
+    transition: transform 0.3s linear;
+    border-radius: 100%;
+    background: var(--a)
+}
+</style>
+
+<body>
+    <h1>Waveform test</h1>
+    <audio src="I Got a Stick Arr Bryan Teoh.mp3" controls></audio>
+    <div id="target">
+
+    </div>
+    <ul>Goals
+        <li>Display Waveform</li>
+        <li>Wrap the waveform around a circle</li>
+        <li>Colour it</li>
+    </ul>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.3/dist/d3.min.js"></script>
+<script>
+    // Testing getting the waveform from an audio file and displaying it with d3
+
+    const audioElement = document.querySelector("audio");
+    const height = 500;
+    const width = 500;
+
+(function main(){
+    const audioContext = new AudioContext();
+    let currentBuffer = null;
+    
+    const fetchData = url => {
+        fetch(url)
+            .then(response => response.arrayBuffer())
+            // .then(response => console.log(response))
+            /* Response
+            body : ReadableStream
+            bodyUsed : false
+            headers : Headers {}
+            ok : true
+            redirected : false
+            status : 200
+            statusText : "OK"
+            type : "basic"
+            url : "http://127.0.0.1:3000/MusicVisualiser/testsong.flac"*/
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+            // .then(arrayBuffer => console.log(arrayBuffer))
+            /* Array Buffer
+            byteLength : 8015755
+            maxByteLength : 8015755
+            resizable : false
+            [[Prototype]] : ArrayBuffer
+            [[Int8Array]] : Int8Array(8015755)
+            [[Uint8Array]] : Uint8Array(8015755)
+            [[ArrayBufferByteLength]] : 8015755
+            [[ArrayBufferData]] : 4638*/
+            .then(audioBuffer => audioBuffer.getChannelData(0))
+            // .then(audioBuffer => console.log(audioBuffer))
+            /*Audio Data
+            duration : 43.486666666666665
+            length : 2087360
+            numberOfChannels : 2
+            sampleRate : 48000
+            [[Prototype]] : AudioBuffer*/
+            .then(channelData => handleData(channelData))
+            // This gives me a Float32Array of values from -1.0 to 1.0 with e-10 precision. Values of 0.0 are no without sound
+    }
+    fetchData("I Got a Stick Arr Bryan Teoh.mp3");
+
+    function handleData(Input){
+        console.log("D3")
+
+        let data = Input.filter((c,i,a) => i % 1000 == 0)//.slice(0, width)
+        console.log(data)
+
+        const radius = 200
+
+
+        const svg = d3.select("#target")
+            .append("svg")
+            .style("border","2px solid red")
+            .attr("width", width)
+            .attr("height", height);
+
+        const xScale = d3.scaleLinear()
+            .domain([0, data.length - 1])
+            .range([0, Math.PI * 2])
+        
+        const yScale = d3.scaleLinear()
+            .domain([-1, 8])
+            .range([radius - 10, 10])
+
+        // const yScale = d3.scaleLog()
+        //     .domain([1e-6, 1])
+        //     .range([radius - 10, 10])
+
+        const line = d3.lineRadial()
+            .angle((d,i) => xScale(i))
+            .radius(d => yScale(d))
+            .curve(d3.curveBasis)
+        //     .x((d,i) => xScale(i))
+        //     .y(d => yScale(Math.abs(d + 1e-6)))
+
+        // const arc = d3.arc()
+        //     .innerRadius(radius - 10)
+        //     .outerRadius(radius)
+        //     .startAngle(0)
+        //     .endAngle(Math.PI * 2)
+
+        svg.append("path")
+        .datum(data)
+        .attr("fill", "var(--a)")
+        .attr("stroke", "var(--b)")
+        .attr("stroke-width", 1)
+        .attr("transform", `translate(${width/2}, ${height/2})`)
+        .attr("d", line)
+
+    }
+})();
+
+audioElement.addEventListener("timeupdate", e=>{
+    let angle = (audioElement.currentTime/audioElement.duration) * 360;
+    document.querySelector("svg").setAttribute("style", `transform: rotate(-${angle + 3}deg)`);
+})
+</script>
+
+<!-- 
+"I Got a Stick Arr Bryan Teoh" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+http://creativecommons.org/licenses/by/4.0/
+ -->
