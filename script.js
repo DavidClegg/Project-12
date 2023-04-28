@@ -1,52 +1,50 @@
-const audioElement = document.querySelector("audio");
-const height = 500;
-const width = 500;
+// Waveform visualiser
+const audioElement = document.querySelector("audio"); // Grab the base audio element
+const height = 500; // height of the svg
+const width = 500; // width of the svg
 
-let duration = 0;
+let duration = 0; // global duration; simply using audioElement.duration kept giving me Infinity; which is ridiculous, I don't have that much time!
 
 function load(url){
-    audioElement.src = url
-    const audioContext = new AudioContext();
-    let currentBuffer = null;
+    // Main loop.
+    audioElement.src = url // set the audio element
+    const audioContext = new AudioContext(); // create a new Audio Context. This opens up a lot of methods to handle audio data.
     
     const fetchData = url => {
-        fetch(url)
-            .then(response => response.arrayBuffer())
-            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+        fetch(url) // Grab the sound file
+            .then(response => response.arrayBuffer()) // Get an array buffer from the data stream
+            .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer)) // Decodes the audio data
             .then(audioBuffer => {duration = audioBuffer.duration; return audioBuffer.getChannelData(0)})
-            .then(channelData => handleData(channelData))
+            // Grab to duration field from the audio data to use later. Get the audio from the first channel
+            .then(channelData => handleData(channelData)) // Pass the channel data to function that creates the waveform
     }
     fetchData(url);
 
     function handleData(Input){
-        console.log("D3")
-
         let data = Input.filter((c,i,a) => i % 1000 == 0)
-        // console.log(data)
+        // Decrease the data array by 1000. This is important when channel data arrays are millions of values long.
 
-        const radius = 250
-
-
-        const svg = d3.select("#record")
+        const radius = 250; 
+        const svg = d3.select("#record") // Create the SVG 
             .append("svg")
-            // .style("border","2px solid red")
             .attr("width", width)
             .attr("height", height);
 
-        const xScale = d3.scaleLinear()
+        const xScale = d3.scaleLinear() // Use scaleLinear to map the indicies of the data array to angles on a circle
             .domain([0, data.length - 1])
             .range([0, Math.PI * 2])
         
-        const yScale = d3.scaleLinear()
-            .domain([-1, 4])
+        const yScale = d3.scaleLinear() // Map the data to a larger value to better display each value.
+        // This is necessary because audio data is in the range of [-1, 1], and is often 6 to 10 orders of magnitude. 
+            .domain([-1, 4]) // This is 4 instead of 1 to smooth out the circular waveform.
             .range([radius - 10, 10])
 
-        const line = d3.lineRadial()
+        const line = d3.lineRadial() // Convert the linear data to radial data
             .angle((d,i) => xScale(i))
             .radius(d => yScale(d))
             .curve(d3.curveBasis)
 
-        svg.append("path")
+        svg.append("path") // create the path itself
         .datum(data)
         .attr("fill", "var(--vinyl)")
         .attr("stroke", "var(--groove)")
@@ -55,22 +53,14 @@ function load(url){
         .attr("d", line)
     }
 };
+
 audioElement.addEventListener("timeupdate", e=>{
+    // Every time step update the rotation of the image and SVG to create the playing record effect
     let angle = (audioElement.currentTime/duration) * 360 -3;
-    console.log({
-        current: audioElement.currentTime,
-        duration: audioElement.duration,
-        globalDuration: duration,
-        angle: angle
-    })
-        // console.log(angle)
-        // angle > 360? 
-        // document.documentElement.style.setProperty("--rotation", `0deg`)//("style", `transform: rotate(-${angle + 3}deg)`);
-        // :
-        document.documentElement.style.setProperty("--rotation", `-${angle+3}deg`)//("style", `transform: rotate(-${angle + 3}deg)`);
+    document.documentElement.style.setProperty("--rotation", `-${angle+3}deg`);
 })
 
-audioElement.addEventListener("completed", ()=> document.documentElement.style.setProperty("--rotation", `-360deg`))
+audioElement.addEventListener("completed", ()=> document.documentElement.style.setProperty("--rotation", `-360deg`)) // when the song ends the rotation should stay at 0 degrees
 
 // Controls
 let playing = false;
@@ -105,6 +95,7 @@ control.pause.addEventListener("click", e =>{
     }
 })
 control.stop.addEventListener("click", e =>{
+    // You can only stop if the song is currently playing
     if(playing){
         audioElement.pause();
         audioElement.currentTime = 0 ;
@@ -143,4 +134,5 @@ function playCD(n){
     document.querySelector("#mainAlbum").src = images[n];
 }
 
-window.addEventListener("load",e=>playCD(0));
+window.addEventListener("load",e=>playCD(0)); 
+// Initially load the first song.
